@@ -3,11 +3,14 @@ define('PATH_ROOT',__DIR__.'/');
 define('PATH_MODELS', PATH_ROOT.'Models');
 require_once PATH_ROOT.'StampService.php';
 
+// Initialize service
 $service = new StampService();
+
+// Customer Address / From Address
 $test_address = new Address(
     'Brendan',
     'Eblin',
-    '2672 PINEY GROVE RD',
+    '2672 PINEY GROVE ROAD',
     'BLACKSHEAR',
     'GA',
     '31516',
@@ -15,21 +18,28 @@ $test_address = new Address(
     "test@gmail.com"
 );
 
+// Cleanse the Address
 $res = $service->cleanseAddress($test_address);
-//print_r('Cleanse status: ' . $res['status']);
+// Update address with cleansed
 $test_address = $res['address'];
 
-$rate = $service->getRates($test_address->ZIPCode,10,"US-PM","Flat Rate Box");
-//var_dump($rate);
+// Get Rates and select a Rate
+// Will get all possible package rates where serviceType is Priority Mail (US-PM)
+$rate = $service->getRates($test_address->ZIPCode,5, "US-PM")[4];
 
-$lbl = $service->generateShippingLabel($test_address, $rate);
+// Will get all possible servicetype rates where packagetype is Flat Rate Box
+// $service->getRates($test_address->ZIPCode,5, NULL, "Flat Rate Box");
 
-var_dump($lbl);
+// Will get new all possible combination of rates of all service types and package types.
+// $service->getRates($test_address->ZIPCode,5);
 
-$service->cancelShippingLabel($lbl["StampsTxID"]);
-// var_dump($service->getRates('11762',10,"US-PM","Flat Rate Box"));
-// var_dump($service->getRates('11762',10));
-// var_dump($service->getRates('11762',10,NULL,NULL,20,20,20));
-// var_dump($service->getRates('11762',10,NULL,NULL,20,20,20, date('yy-m-d')));
+// Purchase postage of exact amount
+$service->purchasePostage($rate->Amount);
+
+// Generate shipping 
+$res = $service->generateShippingLabel($test_address, $rate);
+
+var_dump($res);
+
 die();
 ?>

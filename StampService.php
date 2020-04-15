@@ -1,8 +1,4 @@
 <?php
-// if(isset($this->soapClient)) {
-// } else {
-//     throw new Exception("SOAP CLIENT NOT INITIALIZED!");
-// } 
 require_once PATH_MODELS.'/Account.php';
 require_once PATH_MODELS.'/Address.php';
 require_once PATH_ROOT.'Util.php';
@@ -141,7 +137,7 @@ class StampService {
      * @param float $amount - Amount to purchase
      * @return bool - If purchase is successful or not.
      */
-    private function purchasePostage(float $amount){
+    public function purchasePostage(float $amount){
         if(isset($this->soapClient)) {
             try {
                 if(!isset($amount)) {
